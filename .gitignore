@@ -1,0 +1,8 @@
+#Project files
+[Bb]uild/
+.idea/
+.gradle/
+/app/app.iml
+/local.properties
+
+
