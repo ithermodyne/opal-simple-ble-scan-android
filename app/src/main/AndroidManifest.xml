@@ -1,51 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.teravision.simple"
-    android:versionCode="1"
-    android:versionName="1.0.1">
+    package="concept.test.app.com.simple">
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
-        android:name=".activities.OpalApp"
         android:allowBackup="true"
-        android:icon="@drawable/icon_launcher"
-        android:label="Ble Scan"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".altbeacon.beacon.reference.MonitoringActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".altbeacon.beacon.reference.RangingActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".activities.home.HomeActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".activities.PermissionActivity"
-            android:noHistory="true"
-            android:screenOrientation="nosensor">
-
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity
-            android:name=".activities.home.MainActivity"
-            android:noHistory="true"
-            android:screenOrientation="nosensor" />
-        <activity android:name=".activities.home.MainActivity2" />
 
+        <service
+            android:name=".GetSignalsServices"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false" />
 
-        <activity android:name=".activities.BluetoothScan"/>
     </application>
 
 </manifest>
