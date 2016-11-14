@@ -15,9 +15,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,7 +67,7 @@ public class GetSignalsServices extends IntentService {
                 mScanCallback = new ScanCallback() {
                     @Override
                     public void onScanResult(int callbackType, ScanResult result) {
-                        if(result.getScanRecord().getManufacturerSpecificData().get(6666) != null) {
+                        if(result.getScanRecord().getManufacturerSpecificData().get(6666) != null && SingleSignalFragment.txt_single_signal_log != null && AllSignalsFragment.txt_all_signals_log != null) {
                             new ThreadLE(result).run();
                         }
                     }
@@ -124,23 +129,23 @@ public class GetSignalsServices extends IntentService {
 
             advertisementData = scanResult.getScanRecord().getManufacturerSpecificData().get(6666);
 
-            if(!advertisementData.equals(lastAdvertisementData)){
+            if(!Arrays.equals(advertisementData,lastAdvertisementData)){
+
                 count++;
                 sn = Utils.byteArray4ToInt(advertisementData, 0);
                 capacitor = Utils.hexToVoltaje(advertisementData[4], advertisementData[5]);
                 battery = Utils.hexToVoltaje(advertisementData[6], advertisementData[7]);
 
                 SingleSignalFragment.txt_single_signal_log.setText("");
-                logDevice = "# "+count+". [Device] / "+scanResult.toString()+"\n";
+                logDevice = "# "+count+ ". \nDevice = "+scanResult.toString()+"\n";
 
-                logSingle = "[Device] / "+scanResult.toString()+"\n";
+                logSingle = "Device = "+scanResult.toString()+"\n";
 
                 AllSignalsFragment.txt_all_signals_log.append(logDevice);
 
                 SingleSignalFragment.txt_single_signal_log.append(logSingle);
 
-                logDevice = "# "+count+". [Parse] / Serial Number:"+sn+" Capacitor: "+capacitor+" Battery: "+battery+"\n\n";
-                logSingle = "[Parse] / Serial Number:"+sn+" Capacitor: "+capacitor+" Battery: "+battery+"\n\n";
+                logDevice = "------------\nParse = Serial Number:"+sn+" Capacitor: "+capacitor+" Battery: "+battery+"\n\n";
 
                 AllSignalsFragment.txt_all_signals_log.append(logDevice);
                 SingleSignalFragment.txt_single_signal_log.append(logDevice);
