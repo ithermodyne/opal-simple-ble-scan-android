@@ -73,8 +73,10 @@ public class MainActivity extends AppCompatActivity {
                         .duration(2000)
                         .playOn(view);
                 AllSignalsFragment.txt_all_signals_log.setText("");
+                SingleSignalFragment.txt_single_signal_log.setText("");
                 Snackbar.make(view, "Deleting Log", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
+                GetSignalsServices.count = 0;
             }
         });
 

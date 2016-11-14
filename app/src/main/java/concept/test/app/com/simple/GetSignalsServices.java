@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.ParcelUuid;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class GetSignalsServices extends IntentService {
     /**
      * Initialization of all Android Ble components neccesary to scan a ble device
      * <p>
-     * Only for a Android Build Version 21 +
+     * Only for a Android Build Version 21 +|
      */
     @TargetApi(21)
     public void initializeBleScannerForSDK21() {
@@ -61,10 +62,21 @@ public class GetSignalsServices extends IntentService {
                 mScanCallback = new ScanCallback() {
                     @Override
                     public void onScanResult(int callbackType, ScanResult result) {
-                        if(result.getScanRecord().getManufacturerSpecificData().get(6666) != null){
+                        if(result.getScanRecord().getManufacturerSpecificData().get(6666) != null) {
                             new ThreadLE(result).run();
                         }
+                    }
 
+                    @Override
+                    public void onBatchScanResults(List<ScanResult> results) {
+                        for(ScanResult scanResult : results) {
+                            Log.i("Checking", " onBatchScanResults " + scanResult.describeContents());
+                        }
+                    }
+
+                    @Override
+                    public void onScanFailed(int errorCode) {
+                        Log.i("Checking", " onScanFailed " + errorCode);
                     }
                 };
             }
@@ -76,6 +88,7 @@ public class GetSignalsServices extends IntentService {
      */
 
     public void runScanning() {
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
@@ -89,7 +102,7 @@ public class GetSignalsServices extends IntentService {
 
     }
 
-    static int count = 0;
+    public static int count = 0;
 
     class ThreadLE implements Runnable {
 
@@ -107,10 +120,11 @@ public class GetSignalsServices extends IntentService {
 
             byte[] advertisementData;
             String logDevice;
+            String logSingle;
 
             advertisementData = scanResult.getScanRecord().getManufacturerSpecificData().get(6666);
 
-            if(advertisementData != lastAdvertisementData){
+            if(!advertisementData.equals(lastAdvertisementData)){
                 count++;
                 sn = Utils.byteArray4ToInt(advertisementData, 0);
                 capacitor = Utils.hexToVoltaje(advertisementData[4], advertisementData[5]);
@@ -119,14 +133,20 @@ public class GetSignalsServices extends IntentService {
                 SingleSignalFragment.txt_single_signal_log.setText("");
                 logDevice = "# "+count+". [Device] / "+scanResult.toString()+"\n";
 
+                logSingle = "[Device] / "+scanResult.toString()+"\n";
+
                 AllSignalsFragment.txt_all_signals_log.append(logDevice);
-                SingleSignalFragment.txt_single_signal_log.append(logDevice);
+
+                SingleSignalFragment.txt_single_signal_log.append(logSingle);
 
                 logDevice = "# "+count+". [Parse] / Serial Number:"+sn+" Capacitor: "+capacitor+" Battery: "+battery+"\n\n";
+                logSingle = "[Parse] / Serial Number:"+sn+" Capacitor: "+capacitor+" Battery: "+battery+"\n\n";
 
                 AllSignalsFragment.txt_all_signals_log.append(logDevice);
                 SingleSignalFragment.txt_single_signal_log.append(logDevice);
                 AllSignalsFragment.scrollView.fullScroll(View.FOCUS_DOWN);
+
+                lastAdvertisementData = advertisementData;
             }
         }
     }
