@@ -19,10 +19,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,11 +37,6 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-
-    public static TextView txt_all_signals_log;
-
-    public static TextView txt_single_signals_log;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -113,11 +110,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * A placeholder fragment containing a simple view.
-     */
-    //public static class PlaceholderFragment
-
-    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
@@ -148,9 +140,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return fragment;
 
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            //return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
@@ -192,10 +181,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void sendEmail(String email){
-        Intent intent = new Intent(Intent.ACTION_SENDTO); // it's not ACTION_SEND
+
+
+        String subject;
+        String body;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        subject = "Ble Scan ("+sdf.format(Calendar.getInstance().getTime())+")";
+        body = AllSignalsFragment.txt_all_signals_log != null ? AllSignalsFragment.txt_all_signals_log.getText().toString() : "";
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Subject of email");
-        intent.putExtra(Intent.EXTRA_TEXT, "Body of email");
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
         intent.setData(Uri.parse("mailto:"+email)); // or just "mailto:" for blank
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // this will make such that when user returns to your app, your app is displayed, instead of the email app.
         startActivity(intent);
